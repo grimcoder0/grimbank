@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { EmptyState } from "@/components/app/EmptyState";
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
 import { SampleBadge } from "@/components/dashboard/SampleBadge";
 import { getAccount, listAccounts, listAccountTransactions } from "@/lib/accounts";
@@ -53,7 +54,10 @@ export default async function AccountPage({ params }: Params) {
       {transactions.length > 0 ? (
         <RecentTransactions transactions={transactions} />
       ) : (
-        <p className="text-base text-ink-secondary">No transactions on this account yet.</p>
+        <EmptyState
+          title="No transactions yet"
+          message="Activity on this account will appear here."
+        />
       )}
     </div>
   );

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AccountLink } from "@/components/accounts/AccountLink";
+import { EmptyState } from "@/components/app/EmptyState";
 import { SampleBadge } from "@/components/dashboard/SampleBadge";
 import { listAccounts } from "@/lib/accounts";
 import { formatMoney, sumMinor } from "@/lib/money/format";
@@ -18,20 +19,28 @@ export default function AccountsPage() {
         <SampleBadge />
       </header>
 
-      <p className="text-base text-ink-secondary">
-        Total across {accounts.length} accounts:{" "}
-        <span className="font-semibold text-ink tabular-nums">
-          {formatMoney(total, currency)}
-        </span>
-      </p>
-
-      <ul className="grid gap-4 md:grid-cols-2">
-        {accounts.map((account) => (
-          <li key={account.id}>
-            <AccountLink account={account} />
-          </li>
-        ))}
-      </ul>
+      {accounts.length === 0 ? (
+        <EmptyState
+          title="No accounts yet"
+          message="Accounts will appear here once they're set up."
+        />
+      ) : (
+        <>
+          <p className="text-base text-ink-secondary">
+            Total across {accounts.length} accounts:{" "}
+            <span className="font-semibold text-ink tabular-nums">
+              {formatMoney(total, currency)}
+            </span>
+          </p>
+          <ul className="grid gap-4 md:grid-cols-2">
+            {accounts.map((account) => (
+              <li key={account.id}>
+                <AccountLink account={account} />
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   );
 }

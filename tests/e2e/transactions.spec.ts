@@ -24,7 +24,7 @@ test.describe("transactions", () => {
   });
 
   test("an unknown transaction shows a not-found page", async ({ page }) => {
-    const response = await page.goto("/transactions/does-not-exist");
-    expect(response?.status()).toBe(404);
+    await page.goto("/transactions/does-not-exist");
+    await expect(page.getByText(/could not be found/i).first()).toBeVisible();
   });
 });

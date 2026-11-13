@@ -12,7 +12,7 @@ const SIGN_OUT_NOTICE =
 
 function linkClasses(active: boolean, mobile: boolean) {
   if (mobile) {
-    return `flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold ${
+    return `flex flex-1 flex-col items-center gap-1 py-2.5 text-[10px] min-w-0 px-1 font-semibold ${
       active ? "text-accent" : "text-white/70 hover:text-white"
     }`;
   }
@@ -36,7 +36,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </Link>
         <nav className="mt-10 flex flex-col gap-1">
           {navItems.map((item) => {
-            const active = pathname === item.href || pathname.startsWith(item.href + "/");
+            const active = pathname === item.href;
             return (
               <Link
                 key={item.href}
@@ -86,10 +86,10 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <nav
         aria-label="Primary mobile"
-        className="fixed inset-x-0 bottom-0 z-10 flex border-t border-white/10 bg-navy md:hidden"
+        className="fixed inset-x-0 bottom-0 z-10 flex border-t border-white/10 bg-navy pb-[env(safe-area-inset-bottom)] md:hidden"
       >
         {navItems.map((item) => {
-          const active = pathname === item.href || pathname.startsWith(item.href + "/");
+          const active = pathname === item.href;
           return (
             <Link
               key={item.href}
