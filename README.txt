@@ -1,4 +1,4 @@
-GrimBank stage 5: transfers (simulated, between your own accounts)
-Copy into your project root (~/grimbank). Replaces app/(app)/transfers/page.tsx
-and adds lib/transfers.ts and components/transfers/TransferFlow.tsx.
+GrimBank stage 6: settings (profile and change password, not yet saved)
+Copy into your project root (~/grimbank). Replaces app/(app)/settings/page.tsx
+and adds lib/settings.ts, lib/sample-profile.ts and components/settings.
 Then: npm run typecheck && npm run lint && npm test && npm run build && npm run test:e2e
