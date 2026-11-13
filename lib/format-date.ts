@@ -6,3 +6,13 @@ export function formatShortDate(isoDate: string): string {
     timeZone: "UTC",
   }).format(new Date(isoDate));
 }
+
+export function formatLongDate(isoDate: string): string {
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(isoDate));
+}
