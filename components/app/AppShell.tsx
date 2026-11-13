@@ -36,7 +36,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </Link>
         <nav className="mt-10 flex flex-col gap-1">
           {navItems.map((item) => {
-            const active = pathname === item.href;
+            const active = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <Link
                 key={item.href}
@@ -89,7 +89,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         className="fixed inset-x-0 bottom-0 z-10 flex border-t border-white/10 bg-navy md:hidden"
       >
         {navItems.map((item) => {
-          const active = pathname === item.href;
+          const active = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
             <Link
               key={item.href}

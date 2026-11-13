@@ -6,7 +6,7 @@ async function fillValid(page: import("@playwright/test").Page) {
   await page.getByLabel("Full name").fill("Ada Lovelace");
   await page.getByLabel("Email address").fill("ada@example.com");
   await page.getByLabel("Password", { exact: true }).fill("correct horse battery");
-  await page.getByLabel("Confirm password").fill("correct horse battery");
+  await page.getByLabel("Confirm password", { exact: true }).fill("correct horse battery");
 }
 
 test.describe("signup page", () => {
@@ -18,7 +18,7 @@ test.describe("signup page", () => {
     await expect(page.getByLabel("Full name")).toBeVisible();
     await expect(page.getByLabel("Email address")).toBeVisible();
     await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
-    await expect(page.getByLabel("Confirm password")).toBeVisible();
+    await expect(page.getByLabel("Confirm password", { exact: true })).toBeVisible();
     await expect(page.getByLabel(termsCheckbox)).not.toBeChecked();
   });
 
@@ -39,7 +39,7 @@ test.describe("signup page", () => {
     await page.getByLabel("Full name").fill("Ada Lovelace");
     await page.getByLabel("Email address").fill("ada@example.com");
     await page.getByLabel("Password", { exact: true }).fill("short");
-    await page.getByLabel("Confirm password").fill("short");
+    await page.getByLabel("Confirm password", { exact: true }).fill("short");
     await page.getByLabel(termsCheckbox).check();
     await page.getByRole("button", { name: "Create account" }).click();
     await expect(page.getByText("Use at least 8 characters.")).toBeVisible();
@@ -48,7 +48,7 @@ test.describe("signup page", () => {
   test("rejects mismatched passwords", async ({ page }) => {
     await page.goto("/signup");
     await fillValid(page);
-    await page.getByLabel("Confirm password").fill("a different password");
+    await page.getByLabel("Confirm password", { exact: true }).fill("a different password");
     await page.getByLabel(termsCheckbox).check();
     await page.getByRole("button", { name: "Create account" }).click();
     await expect(page.getByText("Passwords don't match.")).toBeVisible();

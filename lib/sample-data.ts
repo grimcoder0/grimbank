@@ -19,6 +19,7 @@ export type Account = {
 
 export type Transaction = {
   id: string;
+  accountId: string;
   description: string;
   category: Category;
   amountMinor: number; // negative = money out
@@ -34,10 +35,11 @@ export const sampleAccounts: Account[] = [
 
 // Newest first.
 export const sampleTransactions: Transaction[] = [
-  { id: "txn_6", description: "Salary deposit", category: "Income", amountMinor: 320000, currency: "USD", occurredOn: "2026-11-10", status: "completed" },
-  { id: "txn_5", description: "Electricity bill", category: "Bills", amountMinor: -8420, currency: "USD", occurredOn: "2026-11-09", status: "completed" },
-  { id: "txn_4", description: "Grocery store", category: "Groceries", amountMinor: -6315, currency: "USD", occurredOn: "2026-11-08", status: "completed" },
-  { id: "txn_3", description: "Transfer to savings", category: "Transfers", amountMinor: -50000, currency: "USD", occurredOn: "2026-11-07", status: "completed" },
-  { id: "txn_2", description: "Coffee shop", category: "Dining", amountMinor: -685, currency: "USD", occurredOn: "2026-11-06", status: "completed" },
-  { id: "txn_1", description: "Rideshare", category: "Transport", amountMinor: -1840, currency: "USD", occurredOn: "2026-11-05", status: "pending" },
+  { id: "txn_6", accountId: "acc_everyday", description: "Salary deposit", category: "Income", amountMinor: 320000, currency: "USD", occurredOn: "2026-11-10", status: "completed" },
+  { id: "txn_5", accountId: "acc_everyday", description: "Electricity bill", category: "Bills", amountMinor: -8420, currency: "USD", occurredOn: "2026-11-09", status: "completed" },
+  { id: "txn_4", accountId: "acc_everyday", description: "Grocery store", category: "Groceries", amountMinor: -6315, currency: "USD", occurredOn: "2026-11-08", status: "completed" },
+  { id: "txn_3", accountId: "acc_everyday", description: "Transfer to savings", category: "Transfers", amountMinor: -50000, currency: "USD", occurredOn: "2026-11-07", status: "completed" },
+  { id: "txn_7", accountId: "acc_savings", description: "Transfer from everyday", category: "Transfers", amountMinor: 50000, currency: "USD", occurredOn: "2026-11-07", status: "completed" },
+  { id: "txn_2", accountId: "acc_everyday", description: "Coffee shop", category: "Dining", amountMinor: -685, currency: "USD", occurredOn: "2026-11-06", status: "completed" },
+  { id: "txn_1", accountId: "acc_everyday", description: "Rideshare", category: "Transport", amountMinor: -1840, currency: "USD", occurredOn: "2026-11-05", status: "pending" },
 ];
