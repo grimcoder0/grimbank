@@ -47,3 +47,4 @@ next-env.d.ts
 
 # Keep the example env file
 !.env.example
+generated/
