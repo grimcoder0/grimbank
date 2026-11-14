@@ -1,6 +1,5 @@
-GrimBank stage 7: polish (loading, empty states, phone layout)
-Copy into your project root (~/grimbank). Replaces components/app/AppShell.tsx,
-components/dashboard/RecentTransactions.tsx, app/(app)/accounts/page.tsx and
-app/(app)/accounts/[id]/page.tsx. Adds app/(app)/loading.tsx, components/app/Skeleton.tsx,
-components/app/EmptyState.tsx and tests/e2e/phone.spec.ts.
-Then: npm run typecheck && npm run lint && npm test && npm run build && npm run test:e2e
+GrimBank stage 4B: real signup, login, protected pages and sign-out
+Copy into your project root (~/grimbank). Overwrites the auth forms, the (app)
+layout, AppShell, playwright.config.ts and the auth tests. Adds app/actions/auth.ts,
+lib/auth/client.ts and tests/e2e/global-setup.ts.
+Before copying: add the TermsAcceptance model to prisma/schema.prisma and run the migration.

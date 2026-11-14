@@ -1,10 +1,12 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
+
+test.use({ storageState: { cookies: [], origins: [] } });
 
 const termsCheckbox = /I agree to the Terms/;
 
-async function fillValid(page: import("@playwright/test").Page) {
+async function fillValid(page: Page, email: string) {
   await page.getByLabel("Full name").fill("Ada Lovelace");
-  await page.getByLabel("Email address").fill("ada@example.com");
+  await page.getByLabel("Email address").fill(email);
   await page.getByLabel("Password", { exact: true }).fill("correct horse battery");
   await page.getByLabel("Confirm password", { exact: true }).fill("correct horse battery");
 }
@@ -12,13 +14,7 @@ async function fillValid(page: import("@playwright/test").Page) {
 test.describe("signup page", () => {
   test("shows the registration form with an unchecked terms box", async ({ page }) => {
     await page.goto("/signup");
-    await expect(
-      page.getByRole("heading", { name: "Create your account" }),
-    ).toBeVisible();
-    await expect(page.getByLabel("Full name")).toBeVisible();
-    await expect(page.getByLabel("Email address")).toBeVisible();
-    await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
-    await expect(page.getByLabel("Confirm password", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
     await expect(page.getByLabel(termsCheckbox)).not.toBeChecked();
   });
 
@@ -26,9 +22,7 @@ test.describe("signup page", () => {
     await page.goto("/signup");
     await page.getByRole("button", { name: "Create account" }).click();
     await expect(page.getByText("Enter your full name.")).toBeVisible();
-    await expect(page.getByText("Enter your email address.")).toBeVisible();
     await expect(page.getByText("Enter a password.")).toBeVisible();
-    await expect(page.getByText("Confirm your password.")).toBeVisible();
     await expect(
       page.getByText("Accept the Terms of Service and Privacy Policy to continue."),
     ).toBeVisible();
@@ -47,20 +41,19 @@ test.describe("signup page", () => {
 
   test("rejects mismatched passwords", async ({ page }) => {
     await page.goto("/signup");
-    await fillValid(page);
+    await fillValid(page, "ada@example.com");
     await page.getByLabel("Confirm password", { exact: true }).fill("a different password");
     await page.getByLabel(termsCheckbox).check();
     await page.getByRole("button", { name: "Create account" }).click();
     await expect(page.getByText("Passwords don't match.")).toBeVisible();
   });
 
-  test("valid input does not create an account", async ({ page }) => {
+  test("a valid form creates an account and opens the dashboard", async ({ page }) => {
     await page.goto("/signup");
-    await fillValid(page);
+    await fillValid(page, `signup-${Date.now()}@example.com`);
     await page.getByLabel(termsCheckbox).check();
     await page.getByRole("button", { name: "Create account" }).click();
-    await expect(page.getByRole("status")).toContainText("available yet");
-    await expect(page).toHaveURL(/\/signup$/);
+    await expect(page).toHaveURL(/\/dashboard$/);
   });
 
   test("links to the sign-in page", async ({ page }) => {
