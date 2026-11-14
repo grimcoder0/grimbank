@@ -36,7 +36,7 @@ export async function signUpAction(input: SignupInput): Promise<SignUpOutcome> {
     });
     userId = result.user.id;
   } catch (error) {
-    console.error("[signup] Better Auth rejected the request:", error);
+    console.error("[signup]", error instanceof Error ? error.message : String(error), error instanceof Error && error.cause ? String(error.cause) : "");
     // Deliberately vague: the same message covers duplicate emails and
     // other rejections, so the form doesn't reveal which emails exist.
     return { ok: false, reason: "rejected" };
@@ -65,7 +65,7 @@ export async function signInAction(input: LoginInput): Promise<SignInOutcome> {
     });
     return { ok: true };
   } catch (error) {
-    console.error("[signin] Better Auth rejected the request:", error);
+    console.error("[signin]", error instanceof Error ? error.message : String(error), error instanceof Error && error.cause ? String(error.cause) : "");
     // One message for every failure, so attackers can't tell which emails exist.
     return { ok: false, reason: "invalid" };
   }
