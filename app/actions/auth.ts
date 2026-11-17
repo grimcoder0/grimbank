@@ -35,8 +35,7 @@ export async function signUpAction(input: SignupInput): Promise<SignUpOutcome> {
       headers: await headers(),
     });
     userId = result.user.id;
-  } catch (error) {
-    console.error("[signup]", error instanceof Error ? error.message : String(error), error instanceof Error && error.cause ? String(error.cause) : "");
+  } catch {
     // Deliberately vague: the same message covers duplicate emails and
     // other rejections, so the form doesn't reveal which emails exist.
     return { ok: false, reason: "rejected" };
@@ -64,8 +63,7 @@ export async function signInAction(input: LoginInput): Promise<SignInOutcome> {
       headers: await headers(),
     });
     return { ok: true };
-  } catch (error) {
-    console.error("[signin]", error instanceof Error ? error.message : String(error), error instanceof Error && error.cause ? String(error.cause) : "");
+  } catch {
     // One message for every failure, so attackers can't tell which emails exist.
     return { ok: false, reason: "invalid" };
   }
