@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth/client";
+import { usePathname } from "next/navigation";
+import { SignOutButton } from "@/components/app/SignOutButton";
 import { useState, type ReactNode } from "react";
 import { AppIcon } from "@/components/app/AppIcon";
 import { AppLogo } from "@/components/app/AppLogo";
@@ -22,17 +22,7 @@ function linkClasses(active: boolean, mobile: boolean) {
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [notice, setNotice] = useState<string | null>(null);
-  const router = useRouter();
 
-  async function handleSignOut() {
-    try {
-      await authClient.signOut();
-      router.push("/login");
-      router.refresh();
-    } catch {
-      setNotice("Couldn't sign out. Check your connection and try again.");
-    }
-  }
 
   return (
     <div className="min-h-screen bg-cream text-ink md:flex">
@@ -72,13 +62,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <p className="hidden text-sm text-ink-secondary md:block">
             Prototype · simulated data
           </p>
-          <button
-            type="button"
-            onClick={handleSignOut}
-            className="rounded-lg border border-cream-line bg-cream-field px-3.5 py-2 text-sm font-semibold text-navy hover:bg-white"
-          >
-            Sign out
-          </button>
+          <SignOutButton />
         </header>
 
         {notice && (

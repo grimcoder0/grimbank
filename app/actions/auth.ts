@@ -1,6 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db/prisma";
 import { PRIVACY_VERSION, TERMS_VERSION } from "@/lib/legal/versions";
@@ -67,4 +68,9 @@ export async function signInAction(input: LoginInput): Promise<SignInOutcome> {
     // One message for every failure, so attackers can't tell which emails exist.
     return { ok: false, reason: "invalid" };
   }
+}
+
+export async function signOutAction(): Promise<void> {
+  await auth.api.signOut({ headers: await headers() });
+  redirect("/login");
 }
