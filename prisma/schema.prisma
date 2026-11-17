@@ -70,3 +70,13 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+
+model TermsAcceptance {
+  id             String   @id @default(cuid())
+  userId         String
+  termsVersion   String
+  privacyVersion String
+  acceptedAt     DateTime @default(now())
+
+  @@index([userId])
+}

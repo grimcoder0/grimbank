@@ -1,33 +1,26 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
 import { ArrowRight, Eye, EyeOff } from "@/components/auth/icons";
 import { validateLogin, type LoginFieldErrors } from "@/lib/validation/auth";
 import { submitLogin, type LoginFailureReason } from "@/lib/auth/login-client";
 
-type Notice = { variant: "error" | "info"; message: string };
+type Notice = { variant: "error"; message: string };
 
 function noticeFor(reason: LoginFailureReason): Notice {
-  switch (reason) {
-    case "not_available":
-      return {
-        variant: "info",
-        message:
-          "Sign-in isn't available yet. GrimBank is a development prototype and its authentication system hasn't been built.",
-      };
-    case "invalid":
-      return { variant: "error", message: "Incorrect email or password." };
-    case "network":
-      return {
-        variant: "error",
-        message:
-          "We couldn't reach the server. Check your connection and try again.",
-      };
+  if (reason === "network") {
+    return {
+      variant: "error",
+      message: "We couldn't reach the server. Check your connection and try again.",
+    };
   }
+  return { variant: "error", message: "Incorrect email or password." };
 }
 
 export function LoginForm() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -42,17 +35,22 @@ export function LoginForm() {
     if (submitting) return;
     setNotice(null);
 
-    const result = validateLogin({ email, password });
-    if (!result.ok) {
-      setErrors(result.errors);
-      (result.errors.email ? emailRef : passwordRef).current?.focus();
+    const checked = validateLogin({ email, password });
+    if (!checked.ok) {
+      setErrors(checked.errors);
+      (checked.errors.email ? emailRef : passwordRef).current?.focus();
       return;
     }
 
     setErrors({});
     setSubmitting(true);
     try {
-      const outcome = await submitLogin(result.data);
+      const outcome = await submitLogin(checked.data);
+      if (outcome.ok) {
+        router.push("/dashboard");
+        router.refresh();
+        return;
+      }
       setNotice(noticeFor(outcome.reason));
     } catch {
       setNotice(noticeFor("network"));
@@ -64,11 +62,8 @@ export function LoginForm() {
   return (
     <form className="signin-form" onSubmit={handleSubmit} noValidate>
       {notice && (
-        <p
-          className={`form-note ${notice.variant === "error" ? "error" : ""}`}
-          role={notice.variant === "error" ? "alert" : "status"}
-        >
-          <strong>{notice.variant === "error" ? "Error: " : "Notice: "}</strong>
+        <p className="form-note error" role="alert">
+          <strong>Error: </strong>
           {notice.message}
         </p>
       )}

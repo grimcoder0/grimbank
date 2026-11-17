@@ -48,3 +48,6 @@ next-env.d.ts
 # Keep the example env file
 !.env.example
 generated/
+
+# Playwright sign-in state (contains a session cookie)
+tests/e2e/.auth/

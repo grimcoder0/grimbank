@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
 import { ArrowRight } from "@/components/auth/icons";
 import { PasswordField } from "@/components/auth/PasswordField";
@@ -15,23 +16,23 @@ import {
   type SignupFailureReason,
 } from "@/lib/auth/signup-client";
 
-type Notice = { variant: "error" | "info"; message: string };
+type Notice = { variant: "error"; message: string };
 
 function noticeFor(reason: SignupFailureReason): Notice {
-  switch (reason) {
-    case "not_available":
-      return {
-        variant: "info",
-        message:
-          "Account creation isn't available yet. GrimBank is a development prototype and its registration system hasn't been built.",
-      };
-    case "network":
-      return {
-        variant: "error",
-        message:
-          "We couldn't reach the server. Check your connection and try again.",
-      };
+  if (reason === "network") {
+    return {
+      variant: "error",
+      message: "We couldn't reach the server. Check your connection and try again.",
+    };
   }
+  if (reason === "invalid") {
+    return { variant: "error", message: "Check the highlighted details and try again." };
+  }
+  return {
+    variant: "error",
+    message:
+      "We couldn't create that account. If you already have one, sign in instead.",
+  };
 }
 
 type Values = {
@@ -51,6 +52,7 @@ const FIELD_ORDER: (keyof SignupInput)[] = [
 ];
 
 export function SignupForm() {
+  const router = useRouter();
   const [values, setValues] = useState<Values>({
     fullName: "",
     email: "",
@@ -61,9 +63,7 @@ export function SignupForm() {
   const [errors, setErrors] = useState<SignupFieldErrors>({});
   const [notice, setNotice] = useState<Notice | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const refs = useRef<Partial<Record<keyof SignupInput, HTMLInputElement | null>>>(
-    {},
-  );
+  const refs = useRef<Partial<Record<keyof SignupInput, HTMLInputElement | null>>>({});
 
   function update<K extends keyof Values>(key: K, value: Values[K]) {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -75,10 +75,10 @@ export function SignupForm() {
     if (submitting) return;
     setNotice(null);
 
-    const result = validateSignup(values);
-    if (!result.ok) {
-      setErrors(result.errors);
-      const first = FIELD_ORDER.find((key) => result.errors[key]);
+    const checked = validateSignup(values);
+    if (!checked.ok) {
+      setErrors(checked.errors);
+      const first = FIELD_ORDER.find((key) => checked.errors[key]);
       if (first) refs.current[first]?.focus();
       return;
     }
@@ -86,7 +86,12 @@ export function SignupForm() {
     setErrors({});
     setSubmitting(true);
     try {
-      const outcome = await submitSignup(result.data);
+      const outcome = await submitSignup(checked.data);
+      if (outcome.ok) {
+        router.push("/dashboard");
+        router.refresh();
+        return;
+      }
       setNotice(noticeFor(outcome.reason));
     } catch {
       setNotice(noticeFor("network"));
@@ -98,11 +103,8 @@ export function SignupForm() {
   return (
     <form className="signin-form" onSubmit={handleSubmit} noValidate>
       {notice && (
-        <p
-          className={`form-note ${notice.variant === "error" ? "error" : ""}`}
-          role={notice.variant === "error" ? "alert" : "status"}
-        >
-          <strong>{notice.variant === "error" ? "Error: " : "Notice: "}</strong>
+        <p className="form-note error" role="alert">
+          <strong>Error: </strong>
           {notice.message}
         </p>
       )}
@@ -191,28 +193,16 @@ export function SignupForm() {
             type="checkbox"
             checked={values.acceptedTerms}
             aria-invalid={errors.acceptedTerms ? true : undefined}
-            aria-describedby={
-              errors.acceptedTerms ? "acceptedTerms-error" : undefined
-            }
+            aria-describedby={errors.acceptedTerms ? "acceptedTerms-error" : undefined}
             onChange={(e) => update("acceptedTerms", e.target.checked)}
           />
           <span>
             I agree to the{" "}
-            <Link
-              className="text-link"
-              href="/terms"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <Link className="text-link" href="/terms" target="_blank" rel="noopener noreferrer">
               Terms of Service
             </Link>{" "}
             and{" "}
-            <Link
-              className="text-link"
-              href="/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <Link className="text-link" href="/privacy" target="_blank" rel="noopener noreferrer">
               Privacy Policy
             </Link>
             .
